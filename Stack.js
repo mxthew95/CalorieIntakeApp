@@ -2,6 +2,7 @@ import * as React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from './screens/HomeScreen';
 import EditScreen from './screens/EditScreen';
+import AddScreen from './screens/AddScreen';
 const Stack = createStackNavigator();
 
 export default function Navigator() {
@@ -24,7 +25,17 @@ export default function Navigator() {
             <Stack.Screen
                 name="Edit"
                 component={EditScreen}
-                options={({ route }) => ({ title: route.params.calorieID })}
+                options={{
+                    title: 'Update Calorie'
+                }}
+            />
+
+            <Stack.Screen
+                name="Add"
+                component={AddScreen}
+                options={{
+                    title: 'Add Calorie Intake'
+                }}
             />
         </Stack.Navigator>
     )

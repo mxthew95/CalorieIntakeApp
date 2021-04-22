@@ -19,8 +19,4 @@ const CalorieCard = ({ id, amount, date, navigate }) => {
     );
 };
 
-// const styles = StyleSheet.create({
-
-// });
-
 export default CalorieCard;
