@@ -3,12 +3,14 @@ import {
     View,
     StyleSheet,
     SafeAreaView,
+    ScrollView,
     ActivityIndicator,
     Text,
     FlatList,
     Alert,
     TouchableOpacity,
-    Image
+    Image,
+    Dimensions
 } from 'react-native';
 
 import { useFocusEffect } from '@react-navigation/native'
@@ -19,6 +21,8 @@ import { config } from '../Static';
 
 import CalorieCard from '../components/CalorieCard';
 
+import { VictoryChart, VictoryGroup, VictoryBar, VictoryAxis, VictoryTheme, VictoryLegend } from 'victory-native';
+
 const axios = require('axios').default;
 
 const HomeScreen = ({ navigation }) => {
@@ -26,12 +30,23 @@ const HomeScreen = ({ navigation }) => {
     const [calories, setCalories] = useState([]);
     const [appError, setAppError] = useState(false);
     const [refreshing, setRefeshing] = useState(false);
+    const [chartData, setChartData] = useState([]);
 
     const getApiData = async () => {
         try {
             const resp = await axios.get('https://myrestapionheroku.herokuapp.com/api/get-calories');
             console.log(resp.data);
-            setCalories(resp.data);
+            if (resp.data.length > 0) {
+                setCalories(resp.data);
+                let data = resp.data.slice(resp.data.length - 10).map((el, i) => {
+                    return {
+                        x: i + 1,
+                        y: +el.amount,
+                    };
+                });
+                console.log(data)
+                setChartData(data);
+            }
         }
         catch (err) {
             setAppError(true);
@@ -126,6 +141,37 @@ const HomeScreen = ({ navigation }) => {
                         />
                     </TouchableOpacity>
                 </View>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <View style={{ flex: 1, height: 1, marginLeft: 12, backgroundColor: config.secondary }} />
+                    <View style={{ alignItems: 'center' }}>
+                        <Text style={{ color: config.primary }}>Your Calorie Intake</Text>
+                        <Text style={{ color: config.primary }}>(Last 10)</Text>
+                    </View>
+                    <View style={{ flex: 1, height: 1, marginRight: 12, backgroundColor: config.secondary }} />
+                </View>
+                {chartData.length > 0 && (<View style={{ alignSelf: 'center' }}>
+                    <VictoryChart domainPadding={5}>
+                        <VictoryAxis
+                            domain={[1, chartData.length]}
+                            tickCount={chartData.length}
+                            tickFormat={(tick) => tick}
+                            fixLabelOverlap={true}
+                        />
+                        <VictoryLegend x={Dimensions.get('screen').width / 2 - 50} data={[{ name: "kcal", symbol: { fill: "#4f9deb" } }]} />
+                        <VictoryBar
+                            data={chartData}
+                            animate={{
+                                onEnter: {
+                                    duration: 500,
+                                    before: () => ({
+                                        _y: 0,
+                                    })
+                                }
+                            }}
+                            style={{ data: { fill: '#4f9deb' } }}
+                        />
+                    </VictoryChart>
+                </View>)}
             </SafeAreaView>
 
         );
@@ -148,7 +194,7 @@ const HomeScreen = ({ navigation }) => {
         return (
             <>
                 <View style={styles.emptyContainer}>
-                    <Text style={styles.empty}>Much empty...</Text>
+                    <Text style={styles.empty}>No calories added...</Text>
                 </View>
                 <View style={styles.addContainer}>
                     <TouchableOpacity style={styles.addTouchable} onPress={() => { navigation.navigate('Add') }}>
@@ -201,7 +247,7 @@ const styles = StyleSheet.create({
     addContainer: {
         marginTop: 5,
         alignItems: 'center'
-    }
+    },
 });
 
 export default HomeScreen;
