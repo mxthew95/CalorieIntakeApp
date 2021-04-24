@@ -38,7 +38,8 @@ const HomeScreen = ({ navigation }) => {
             console.log(resp.data);
             if (resp.data.length > 0) {
                 setCalories(resp.data);
-                let data = resp.data.slice(resp.data.length - 10).map((el, i) => {
+                let data = resp.data.length > 10 ? resp.data.slice(resp.data.length - 10) : resp.data;
+                data = data.map((el, i) => {
                     return {
                         x: i + 1,
                         y: +el.amount,
@@ -76,32 +77,32 @@ const HomeScreen = ({ navigation }) => {
         getApiData();
     };
 
-    // useEffect(() => {
-    //     notification.getScheduledNotifications((notifications) => {
-    //         notification.removeAllDeliveredNotifications();
-    //         if (notifications.length < 1) {
-    //             notification.deleteChannel('1');
-    //             notification.createChannel('1');
-    //             //current time in mil
-    //             const currentTime = Date.now();
-    //             const d = new Date().getDate();
-    //             const m = new Date().getMonth() + 1;
-    //             const y = new Date().getFullYear();
-    //             let scheduledTime = Date.parse(`${m}/${d}/${y} 23:39:00`);
+    useEffect(() => {
+        notification.getScheduledNotifications((notifications) => {
+            notification.removeAllDeliveredNotifications();
+            if (notifications.length < 1) {
+                notification.deleteChannel('1');
+                notification.createChannel('1');
+                //current time in mil
+                const currentTime = Date.now();
+                const d = new Date().getDate();
+                const m = new Date().getMonth() + 1;
+                const y = new Date().getFullYear();
+                let scheduledTime = Date.parse(`${m}/${d}/${y} 15:00:00`);
 
-    //             if(currentTime > scheduledTime){
-    //                 scheduledTime += (24*60*60*1000);
-    //             }
+                if(currentTime > scheduledTime){
+                    scheduledTime += (24*60*60*1000);
+                }
 
-    //             console.log((new Date(scheduledTime)).toString());
+                console.log((new Date(scheduledTime)).toString());
 
-    //             notification.scheduledNotify('1', 'Notification title', 'Notification message...', scheduledTime);
-    //         }
-    //         else {
-    //             console.log(`notification has been scheduled at ${notifications[0].date}`);
-    //         }
-    //     });
-    // }, []);
+                notification.scheduledNotify('1', 'Notification title', 'Notification message...', scheduledTime);
+            }
+            else {
+                console.log(`notification has been scheduled at ${notifications[0].date}`);
+            }
+        });
+    }, []);
 
     const renderItem = ({ item }) => {
         const dateObj = (new Date(item.createdAt)).toString().split(' ');
@@ -145,7 +146,7 @@ const HomeScreen = ({ navigation }) => {
                     <View style={{ flex: 1, height: 1, marginLeft: 12, backgroundColor: config.secondary }} />
                     <View style={{ alignItems: 'center' }}>
                         <Text style={{ color: config.primary }}>Your Calorie Intake</Text>
-                        <Text style={{ color: config.primary }}>(Last 10)</Text>
+                        {calories.length > 10 && <Text style={{ color: config.primary }}>(Last 10)</Text>}
                     </View>
                     <View style={{ flex: 1, height: 1, marginRight: 12, backgroundColor: config.secondary }} />
                 </View>
