@@ -15,6 +15,7 @@ const EditScreen = ({ navigation, route }) => {
     const [visible, setVisible] = useState(false);
     const [appError, setAppError] = useState(false);
     const [action, setAction] = useState('');
+    const [crazyAmount, setCrazyAmount] = useState(false);
 
     const onChangeNumber = (input) => {
         if(+input > 50000){
