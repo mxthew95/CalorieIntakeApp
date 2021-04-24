@@ -96,7 +96,7 @@ const HomeScreen = ({ navigation }) => {
 
                 console.log((new Date(scheduledTime)).toString());
 
-                notification.scheduledNotify('1', 'Notification title', 'Notification message...', scheduledTime);
+                notification.scheduledNotify('1', 'Daily Calorie Intake', 'Hey! This is a daily reminder to track your calorie intake.', scheduledTime);
             }
             else {
                 console.log(`notification has been scheduled at ${notifications[0].date}`);

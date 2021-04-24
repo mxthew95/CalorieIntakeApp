@@ -17,6 +17,15 @@ const EditScreen = ({ navigation, route }) => {
     const [action, setAction] = useState('');
 
     const onChangeNumber = (input) => {
+        if(+input > 50000){
+            setCrazyAmount(true);
+            setNumber(input);
+            return;
+        }
+        else{
+            setCrazyAmount(false);
+        }
+
         if (input.length > 0 && !input.match(/^\d{1,6}(\.\d{1,2})?$/)) {
             setInvalid(true);
         }
@@ -25,10 +34,6 @@ const EditScreen = ({ navigation, route }) => {
             input = +input + '';
         }
         setNumber(input)
-    };
-
-    const toggleOverlay = () => {
-        setVisible(!visible);
     };
 
     const updateData = async () => {
@@ -147,13 +152,14 @@ const EditScreen = ({ navigation, route }) => {
                 <Text style={styles.unit}>kcal</Text>
             </View>
             {invalid && <View><Text style={{ color: 'red' }}>Invalid format</Text></View>}
+            {crazyAmount && <View><Text style={{ color: 'red' }}>Are you kidding me? No human body can withstand that amount</Text></View>}
             <View style={styles.buttonRow}>
 
                 <Button
                     title="SAVE"
                     raised={true}
                     onPress={updateData}
-                    disabled={invalid}
+                    disabled={invalid || crazyAmount}
                     buttonStyle={{ height: 50, width: 100 }}
                 />
 

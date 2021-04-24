@@ -31,10 +31,6 @@ const AddScreen = ({ navigation }) => {
         setNumber(input)
     };
 
-    const toggleOverlay = () => {
-        setVisible(!visible);
-    };
-
     const postData = async () => {
         setVisible(true);
         try {
