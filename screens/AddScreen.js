@@ -9,8 +9,18 @@ const AddScreen = ({ navigation }) => {
     const [number, setNumber] = useState('0');
     const [invalid, setInvalid] = useState(false);
     const [visible, setVisible] = useState(false);
+    const [crazyAmount, setCrazyAmount] = useState(false);
 
     const onChangeNumber = (input) => {
+        if(+input > 50000){
+            setCrazyAmount(true);
+            setNumber(input);
+            return;
+        }
+        else{
+            setCrazyAmount(false);
+        }
+
         if (input.length > 0 && !input.match(/^\d{1,6}(\.\d{1,2})?$/)) {
             setInvalid(true);
         }
@@ -58,12 +68,13 @@ const AddScreen = ({ navigation }) => {
                 <Text style={styles.unit}>kcal</Text>
             </View>
             {invalid && <View><Text style={{ color: 'red' }}>Invalid format</Text></View>}
+            {crazyAmount && <View><Text style={{ color: 'red' }}>Are you kidding me? No human body can withstand that amount</Text></View>}
             <View style={styles.saveBtn}>
                 <Button
                     title="SAVE"
                     raised={true}
                     onPress={postData}
-                    disabled={invalid}
+                    disabled={invalid || crazyAmount}
                 />
             </View>
             <Overlay isVisible={visible} overlayStyle={styles.overlay}>
